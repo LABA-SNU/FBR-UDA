@@ -87,10 +87,20 @@ Open and run: `01_FBR_field_adaptive_background_recomposition.ipynb`
 
 ### 4) Train & evaluate
 ```bash
-# default run
 python main.py
 ```
 Artifacts (checkpoints, logs) are saved under `exp/`.
+
+---
+
+⚙️ Configuration (pointer)
+
+Default options live in utils/train_config.py.
+
+Dataset types supported (see datasets/__init__.py):
+src_bg_augmented, src_lab, src_real, tgt, tst → each maps to the folders shown above.
+
+Models supported: ddc, dcoral, dann, cdan, daln (with ResNet backbones; see models/).
 
 ---
 
@@ -98,12 +108,46 @@ Artifacts (checkpoints, logs) are saved under `exp/`.
 
 ```
 .
-├── datasets/
-├── models/
+├── datasets/                         # dataset loaders & helpers
+│   ├── __init__.py                   # maps dataset "type" -> folder paths
+│   └── dataset.py
+├── models/                           # model builders (UDA variants)
+│   ├── layers/                       # extra layers if any
+│   ├── uda_losses/                   # UDA loss modules
+│   ├── ddc.py  dcoral.py  dann.py  cdan.py  daln.py  ...
+│   └── resnet.py  vanilaresnet.py
 ├── utils/
+│   ├── dataloader_utils.py           # class weights, distribution checks
+│   ├── train_utils.py                # trainer & loops
+│   ├── transforms_utils.py           # transforms/augmentations
+│   └── train_config.py               # default training options
+├── 01_FBR_field_adaptive_background_recomposition.ipynb
 ├── main.py
 ├── requirements.txt
 └── README.md
 ```
+---
+
+🔁 Reproducibility Notes
+
+Package versions are listed in requirements.txt.
+
+We set common seeds where applicable (default 42).
+
+CUDA/OS differences may lead to minor metric variance.
 
 ---
+
+📜 Citation
+
+If you use this repository, please cite the following manuscript (under review):
+
+```
+@misc{jeon2025lab2field,
+  title        = {Bridging the Lab-to-Field Gap in Plant Disease Diagnosis through Unsupervised Domain Adaptation Enhanced by Background Recomposition},
+  author       = {Jeon, Woosang and Kim, Taehyeong and Choi, Sanghyeok and Yang, Kyuseok},
+  year         = {2025},
+  note         = {Manuscript under review. Corresponding author: taehyeong.kim@snu.ac.kr},
+  howpublished = {\url{https://github.com/LABA-SNU/FBR-UDA}}
+}
+```
