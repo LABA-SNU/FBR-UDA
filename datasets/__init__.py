@@ -1,70 +1,102 @@
+# datasets/__init__.py
+from pathlib import Path
+import os, pickle, glob
+from typing import Dict, List, Tuple
 from datasets.dataset import CustomDataset
-from utils.transforms_utils import transform, augmentation, augmentation_weak, augmentation_strong
-import pickle
+from utils.transforms_utils import transform as default_transform, augmentation as default_augmentation
 
-def get_dataset(crop, dataset_opts, aug_type=None):
+VALID_TYPES = {"src_bg_augmented", "src_lab", "src_real", "tgt", "tst"}
 
-    crop = crop
-    type = dataset_opts['type']
-    print(type)
-    
-    try: 
-        transform = dataset_opts['transform']
-    except:
-        transform = None
+def _load_structure_or_scan(crop: str) -> Dict[str, List[str]]:
+    """Try to load data/{crop}/exp_structure.pickle.
+    If missing, build a naive split by scanning PV/images for source, and plantpathology/images for target/test.
+    """
+    root = Path(f"data/{crop}")
+    pkl = root / "exp_structure.pickle"
+    if pkl.exists():
+        with open(pkl, "rb") as f:
+            return pickle.load(f)
 
-    try:
-        augmentation = dataset_opts['augmentation']
-    except:
-        augmentation = None
-    
-    if crop in ['apple']:
-        
-        with open(f'data/{crop}/exp_structure.pickle', 'rb') as fr:
-            data_structure = pickle.load(fr)  
+    # fallback: scan
+    pv_imgs_dir = root / "PV/images"
+    tgt_imgs_dir = root / "plantpathology/images"
 
-        if type in ['src_bg_augmented', 'src_augmented']: 
-            
-            image_root = '/disks/ssd1/jwoosang1/plant_disease/apple/PV/bg_composed'
-            labels = '/disks/ssd1/jwoosang1/plant_disease/apple/PV/pv_labels.pickle'
-            flag = 'labeled'
-            img_names = data_structure['source']
-            
-        elif type == 'src_lab': 
+    def list_images(d: Path) -> List[str]:
+        exts = {".jpg", ".jpeg", ".png", ".bmp", ".webp", ".tif", ".tiff"}
+        if not d.exists():
+            return []
+        return [p.name for p in d.iterdir() if p.suffix.lower() in exts]
 
-            image_root = '/disks/ssd1/jwoosang1/plant_disease/apple/PV/images'
-            labels = '/disks/ssd1/jwoosang1/plant_disease/apple/PV/pv_labels.pickle'
-            flag = 'labeled'
-            img_names = data_structure['source']
-        
-        elif type == 'src_real': 
+    src_names = list_images(pv_imgs_dir)
+    tgt_names = list_images(tgt_imgs_dir)
 
-            image_root = '/disks/ssd1/jwoosang1/plant_disease/apple/plantpathology/images'
-            labels = '/disks/ssd1/jwoosang1/plant_disease/apple/plantpathology/apple_labels.pickle'
-            flag = 'labeled'
-            img_names = data_structure['source']
-            
-        elif type == 'tgt': 
+    # naive: 80%/10%/10% by name sort
+    src_names.sort(); tgt_names.sort()
+    n_src = len(src_names); n_tgt = len(tgt_names)
+    s_train = src_names
+    t_train = tgt_names[: int(n_tgt * 0.9)]
+    t_test  = tgt_names[int(n_tgt * 0.9):]
 
-            image_root = '/disks/ssd1/jwoosang1/plant_disease/apple/plantpathology/images'
-            labels = '/disks/ssd1/jwoosang1/plant_disease/apple/plantpathology/apple_labels.pickle'
-            flag = 'unlabeled'
-            img_names = data_structure['target']
-            
-        elif type == 'tst': 
-            
-            image_root = '/disks/ssd1/jwoosang1/plant_disease/apple/plantpathology/images'
-            labels = '/disks/ssd1/jwoosang1/plant_disease/apple/plantpathology/apple_labels.pickle'
-            flag = 'unlabeled'
-            img_names = data_structure['test']
-        
-        
-        return CustomDataset(img_folder = image_root, 
-                             json_pickle = labels, 
-                             flag = flag,
-                             img_names = img_names,
-                             transform = transform,
-                             augmentation = augmentation,
-                            )
+    return {"source": s_train, "target": t_train, "test": t_test}
+
+def get_dataset(crop: str, dataset_opts: dict, aug_type=None):
+    """Factory that respects the public data layout under data/{crop}/..."""
+    dtype = dataset_opts.get("type", None)
+    if dtype not in VALID_TYPES:
+        raise ValueError(f"Unknown dataset type '{dtype}'. Valid: {sorted(VALID_TYPES)}")
+
+    tfm = dataset_opts.get("transform", default_transform)
+    aug = dataset_opts.get("augmentation", None)
+
+    # load structure or scan
+    ds_struct = _load_structure_or_scan(crop)
+
+    # roots relative to repo
+    pv_root   = Path(f"data/{crop}/PV")
+    pp_root   = Path(f"data/{crop}/plantpathology")
+
+    # label pickles are optional
+    pv_labels_pkl = pv_root / "pv_labels.pickle"
+    pp_labels_pkl = pp_root / "apple_labels.pickle"
+
+    if dtype in {"src_bg_augmented", "src_augmented"}:
+        image_root = pv_root / "bg_composed"
+        labels     = pv_labels_pkl if pv_labels_pkl.exists() else None
+        flag       = "labeled"
+        img_names  = ds_struct["source"]
+
+    elif dtype == "src_lab":
+        image_root = pv_root / "images"
+        labels     = pv_labels_pkl if pv_labels_pkl.exists() else None
+        flag       = "labeled"
+        img_names  = ds_struct["source"]
+
+    elif dtype == "src_real":
+        image_root = pp_root / "images"
+        labels     = pp_labels_pkl if pp_labels_pkl.exists() else None
+        flag       = "labeled"
+        img_names  = ds_struct["source"]
+
+    elif dtype == "tgt":
+        image_root = pp_root / "images"
+        labels     = pp_labels_pkl if pp_labels_pkl.exists() else None
+        flag       = "unlabeled"
+        img_names  = ds_struct["target"]
+
+    elif dtype == "tst":
+        image_root = pp_root / "images"
+        labels     = pp_labels_pkl if pp_labels_pkl.exists() else None
+        flag       = "unlabeled"
+        img_names  = ds_struct["test"]
+
     else:
-        raise RuntimeError("Dataset for {} not available".format(crop))
+        raise RuntimeError(f"Dataset type not handled: {dtype}")
+
+    return CustomDataset(
+        img_folder   = str(image_root),
+        json_pickle  = str(labels) if labels else None,
+        flag         = flag,
+        img_names    = img_names,
+        transform    = tfm,
+        augmentation = aug,
+    )
