@@ -128,15 +128,6 @@ Models supported: ddc, dcoral, dann, cdan, daln (with ResNet backbones; see mode
 ```
 ---
 
-🔁 Reproducibility Notes
-
-Package versions are listed in requirements.txt.
-
-We set common seeds where applicable (default 42).
-
-CUDA/OS differences may lead to minor metric variance.
-
----
 
 📜 Citation
 
