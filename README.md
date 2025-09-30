@@ -1,4 +1,7 @@
-# FBR-UDA — Field‑Adaptive Background Recomposition + Unsupervised Domain Adaptation (code‑only)
+# FBR-UDA — Field‑Adaptive Background Recomposition + Unsupervised Domain Adaptation
+
+<img width="5805" height="2603" alt="Fig_graphical_abstract" src="https://github.com/user-attachments/assets/4848efa6-e0de-4b73-88eb-43b9b1163a48" />
+
 
 > Code and project structure for plant disease recognition under domain shift.  
 > **No data or pretrained weights are included.** Bring your own datasets and follow the folder layout below.
