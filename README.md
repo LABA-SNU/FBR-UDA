@@ -129,8 +129,30 @@ Models supported: ddc, dcoral, dann, cdan, daln (with ResNet backbones; see mode
 ├── requirements.txt
 └── README.md
 ```
+
 ---
 
+## 🌶️ Practical Case Study: P‑Chili Pepper Dataset
+
+We publicly release the **P‑Chili Pepper Dataset**, which was curated to validate our framework in a challenging real-world scenario: distinguishing between **Viral Infection** and **Abiotic Stress**.
+
+Plant viral diseases (e.g., **BBWV2**) often share visual symptoms with environmental stresses (e.g., **Flooding**), such as yellowing and wilting. This dataset provides definitive ground truth for this difficult classification task.
+
+> **[📥 Download P-Chili Pepper Dataset (v1.0)](https://github.com/LABA-SNU/FBR-UDA/releases/download/v1.0/P_Chili_Pepper_Dataset.zip)**
+
+### Dataset Summary
+* **Classes**: `0: Healthy`, `1: Abiotic Stress (Flooding)`, `2: Viral Infection (BBWV2)`
+* **Scale**: Total **4,102** images (High-resolution RGB)
+* **Environment**: Collected in a biosafe controlled facility to ensure biological accuracy.
+
+### 👥 Credits
+This dataset was rigorously cultivated and annotated by:
+* **Seong-Yeop Kim** & **Mungyeong Song**
+    <br>*(Integrated Major in Global Smart Farm / Graduate School of International Agricultural Technology, Seoul National University)*
+
+
+
+---
 
 📜 Citation
 
