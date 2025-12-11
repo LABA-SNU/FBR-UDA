@@ -137,7 +137,11 @@ Models supported: ddc, dcoral, dann, cdan, daln (with ResNet backbones; see mode
 This dataset was used to validate our framework on the challenging task of distinguishing **Viral Infection (BBWV2)** from **Abiotic Stress (Flooding)**, which share visually similar symptoms.
 
 * **Download:** [P-Chili Pepper Dataset (v1.0)](https://github.com/LABA-SNU/FBR-UDA/releases/download/v1.0/P_Chili_Pepper_Dataset.zip)
-* **Specs:** 4,102 images (Healthy / Abiotic Stress / Viral Infection) collected in a controlled biosafe facility.
+* **Total Images:** 4,102 images
+* **Class Distribution:**
+    * `0` **Healthy**: 1,325 images
+    * `1` **Abiotic Stress** (Flooding): 1,642 images
+    * `2` **Viral Infection** (BBWV2): 1,135 images
 * **Contributors:** Data collection and annotation were conducted by **Seong-Yeop Kim** & **Mungyeong Song** *(Seoul National University)*.
 
 
