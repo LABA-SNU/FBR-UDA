@@ -155,7 +155,7 @@ If you use this repository, please cite the following manuscript (under review):
 ```
 @misc{jeon2025lab2field,
   title        = {Bridging the Lab-to-Field Gap in Plant Disease Diagnosis through Unsupervised Domain Adaptation Enhanced by Background Recomposition},
-  author       = {Jeon, Woosang and Kim, Taehyeong and Choi, Sanghyeok and Yang, Kyuseok},
+  author       = {Jeon, Woosang and Kim, Taehyeong and Choi, Sanghyeok and Yang, Kyuseok and Kim, Seong-Yeop and Song, Mungyeong},
   year         = {2025},
   note         = {Manuscript under review. Corresponding author: taehyeong.kim@snu.ac.kr},
   howpublished = {\url{https://github.com/LABA-SNU/FBR-UDA}}
