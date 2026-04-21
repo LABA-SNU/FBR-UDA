@@ -153,11 +153,14 @@ This dataset was used to validate our framework on the challenging task of disti
 If you use this repository, please cite the following manuscript (under review):
 
 ```
-@misc{jeon2025lab2field,
-  title        = {Bridging the Lab-to-Field Gap in Plant Disease Diagnosis through Unsupervised Domain Adaptation Enhanced by Background Recomposition},
-  author       = {Jeon, Woosang and Kim, Taehyeong and Choi, Sanghyeok and Yang, Kyuseok and Kim, Seong-Yeop and Song, Mungyeong},
-  year         = {2025},
-  note         = {Manuscript under review. Corresponding author: taehyeong.kim@snu.ac.kr},
-  howpublished = {\url{https://github.com/LABA-SNU/FBR-UDA}}
+@article{JEON2026103579,
+   title = {Bridging the Lab-to-Field gap in plant disease diagnosis through unsupervised domain adaptation enhanced by background recomposition},
+   journal = {Ecological Informatics},
+   volume = {93},
+   pages = {103579},
+   year = {2026},
+   issn = {1574-9541},
+   doi = {https://doi.org/10.1016/j.ecoinf.2025.103579},
+   url = {https://www.sciencedirect.com/science/article/pii/S1574954125005886},
 }
 ```
